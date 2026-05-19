@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中山區吃到飽地圖指南 🍗</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* 自定義滾動條與平滑過渡效果 */
+        html { scroll-behavior: smooth; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #fbbf24; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #f59e0b; }
+        
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .faq-answer.open {
+            max-height: 500px; /* 隨內容高度調整 */
+        }
+        .faq-icon {
+            transition: transform 0.3s ease;
+        }
+        .faq-icon.open {
+            transform: rotate(180deg);
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#f59e0b', // 琥珀色/橘黃色，充滿食慾與活力
+                        secondary: '#b45309',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased font-sans flex flex-col min-h-screen">
+
+    <!-- 導覽列 -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex-shrink-0 flex items-center cursor-pointer" onclick="window.scrollTo(0,0)">
+                    <i class="fa-solid fa-burger text-primary text-2xl mr-2"></i>
+                    <span class="font-bold text-xl tracking-tight">中山吃爆指南</span>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="#resources" class="text-gray-600 hover:text-primary transition font-medium">美食資源庫</a>
+                    <a href="#faq" class="text-gray-600 hover:text-primary transition font-medium">挑戰 Q&A</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 英雄區塊 (Hero Section) -->
+    <header class="bg-primary text-white py-16 md:py-24 relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+            <span class="bg-white text-primary text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider mb-4 inline-block">大學生必看企劃</span>
+            <h1 class="text-4xl md:text-5xl font-extrabold mb-4 drop-shadow-md">「吳菇組合」中山區吃到飽地圖 🔥</h1>
+            <p class="text-lg md:text-xl font-medium max-w-2xl mx-auto mb-8 drop-shadow">
+                2小時不限金額隨便吃！集結小吳與金針菇爆吃的9間中山區神級美食。跟著這份名單，下課後就出發吃爆中山區！
+            </p>
+            <a href="#resources" class="bg-white text-primary font-bold rounded-full py-3 px-8 shadow-lg hover:bg-gray-100 transition transform hover:-translate-y-1 inline-flex items-center">
+                開始探索 <i class="fa-solid fa-arrow-down ml-2"></i>
+            </a>
+        </div>
+    </header>
+
+    <!-- 主要內容區 -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
+        
+        <!-- 搜尋與資源庫區塊 -->
+        <section id="resources" class="mb-16">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-gray-900 mb-2">😋 美食資源庫</h2>
+                <p class="text-gray-500">輸入關鍵字（如：甜點、麵線、抹茶），快速尋找你想吃的店！</p>
+            </div>
+
+            <!-- 搜尋框 -->
+            <div class="max-w-xl mx-auto mb-10 relative">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
+                </div>
+                <input type="text" id="searchInput" 
+                    class="block w-full pl-11 pr-4 py-3 border border-gray-300 rounded-full leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition shadow-sm text-lg" 
+                    placeholder="搜尋中山區美食...">
+            </div>
+
+            <!-- 資源網格 -->
+            <div id="resourceGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- JavaScript 將動態生成卡片 -->
+            </div>
+            
+            <!-- 無搜尋結果提示 -->
+            <div id="noResults" class="hidden text-center py-10 text-gray-500">
+                <i class="fa-regular fa-face-frown text-4xl mb-3"></i>
+                <p class="text-lg">找不到相關美食，換個關鍵字試試吧！</p>
+            </div>
+        </section>
+
+        <hr class="border-gray-200 my-12">
+
+        <!-- FAQ 區塊 -->
+        <section id="faq" class="mb-16 max-w-3xl mx-auto">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-gray-900 mb-2">🤔 挑戰規則 Q&A (FAQ)</h2>
+                <p class="text-gray-500">想挑戰同款吃到飽？先來了解這次的瘋狂規則！</p>
+            </div>
+
+            <div class="space-y-4" id="faqContainer">
+                <!-- FAQ 項目 1 -->
+                <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+                    <button class="faq-toggle w-full px-6 py-4 text-left flex justify-between items-center focus:outline-none hover:bg-gray-50 transition">
+                        <span class="font-bold text-lg text-gray-800">Q1：這次「中山區吃到飽」挑戰的規則是什麼？</span>
+                        <i class="fa-solid fa-chevron-down text-gray-400 faq-icon"></i>
+                    </button>
+                    <div class="faq-answer px-6 bg-gray-50 text-gray-600">
+                        <div class="pb-4 pt-2 border-t border-gray-100">
+                            限時 <strong>兩個小時</strong> 內，在中山區範圍內的餐點隨便你吃（想吃貴的、難預約的都可以）。全部的花費開銷都由老闆（小吳）本人結帳支出！
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ 項目 2 -->
+                <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+                    <button class="faq-toggle w-full px-6 py-4 text-left flex justify-between items-center focus:outline-none hover:bg-gray-50 transition">
+                        <span class="font-bold text-lg text-gray-800">Q2：如果挑戰失敗（遲到）有什麼懲罰嗎？</span>
+                        <i class="fa-solid fa-chevron-down text-gray-400 faq-icon"></i>
+                    </button>
+                    <div class="faq-answer px-6 bg-gray-50 text-gray-600">
+                        <div class="pb-4 pt-2 border-t border-gray-100">
+                            規定時間（如 2點50分）一到，必須準時回到原點集合。如果沒有在時間內回到原點的話，要面臨高達 <strong>20萬台幣</strong> 的鉅額罰款！遲到絕對會被罰錢。
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ 項目 3 -->
+                <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+                    <button class="faq-toggle w-full px-6 py-4 text-left flex justify-between items-center focus:outline-none hover:bg-gray-50 transition">
+                        <span class="font-bold text-lg text-gray-800">Q3：這次合體的特別嘉賓是誰？</span>
+                        <i class="fa-solid fa-chevron-down text-gray-400 faq-icon"></i>
+                    </button>
+                    <div class="faq-answer px-6 bg-gray-50 text-gray-600">
+                        <div class="pb-4 pt-2 border-t border-gray-100">
+                            本次邀請到的重量級嘉賓是 <strong>金針菇</strong>！這也是「吳菇組合」（小吳＋金針菇）首次在這個系列中合體挑戰。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 頁尾 -->
+    <footer class="bg-gray-900 text-gray-400 py-8 text-center">
+        <div class="max-w-7xl mx-auto px-4">
+            <p class="mb-2">資料來源：【小吳】最狂吃到飽來啦🔥『"中山區"吃到飽地圖』</p>
+            <p class="text-sm">僅供大學生社團/專題練習使用，非官方網站。</p>
+        </div>
+    </footer>
+
+    <!-- 互動邏輯腳本 -->
+    <script>
+        // --- 1. 美食資源庫資料 (根據上傳文本萃取) ---
+        const resources = [
+            {
+                name: "海鮮麵線 (海王子三寶)",
+                category: "鹹食",
+                price: "$170",
+                description: "打鐵町附近。一碗 170 元，包含魷魚、鮮蚵、大腸還有魚酥。辣椒 100 分超搭，非常夠味！",
+                icon: "fa-bowl-food"
+            },
+            {
+                name: "草莓冰淇淋",
+                category: "甜點",
+                price: "$150/支",
+                description: "底部餅乾是日本「白色戀人」那種餅乾皮，加上滿滿的草莓口味與巧克力點綴，大人感的甜味。",
+                icon: "fa-ice-cream"
+            },
+            {
+                name: "開心果水管捲",
+                category: "甜點",
+                price: "未知",
+                description: "滿滿的開心果，濃郁且鹹甜鹹甜的，外皮超級脆！吃起來有點像現烤的蛋捲。",
+                icon: "fa-cookie-bite"
+            },
+            {
+                name: "麻辣吉拿棒 / 熱狗棒",
+                category: "小吃",
+                price: "未知",
+                description: "口感很脆，像厚吐司配油條的感覺。雖然是麻辣口味但有香氣不會真得很辣，不敢吃辣也能吃。",
+                icon: "fa-hotdog"
+            },
+            {
+                name: "碳烤鰻魚飯套裝",
+                category: "鹹食",
+                price: "未知 (高級)",
+                description: "大片碳烤鰻魚配上玉子燒！醬汁滿滿非常好吃，為了吃它還特地搭計程車趕場。",
+                icon: "fa-fish"
+            },
+            {
+                name: "生魚片丼飯",
+                category: "鹹食",
+                price: "最低 $580",
+                description: "首站吃的高級約會餐廳！裡面有會發光的高級海膽和鮭魚，非常享受。",
+                icon: "fa-bowl-rice"
+            },
+            {
+                name: "60+ TS Shop 烏龍茶",
+                category: "飲品",
+                price: "未知",
+                description: "主打烏龍茶的專賣店。推薦招牌「一斤一紅」，三分糖加「雙料」(例如超好吃的茶凍)，非常清爽！",
+                icon: "fa-mug-hot"
+            },
+            {
+                name: "日式和菓子 (銅鑼燒)",
+                category: "甜點",
+                price: "$90/顆",
+                description: "餡料豐富飽滿的銅鑼燒（90元），不會太甜；還有超熱銷的冷凍「抹茶餅」需要退冰才能吃。",
+                icon: "fa-stroopwafel"
+            },
+            {
+                name: "乾拌螺螄粉",
+                category: "鹹食",
+                price: "未知",
+                description: "乾的螺螄粉！麵條完完全全吸滿湯汁，加上超脆的木耳，口感滿分。",
+                icon: "fa-bowl-food"
+            },
+            {
+                name: "MVbakery 冠軍肉桂捲",
+                category: "甜點",
+                price: "未知",
+                description: "知名麵包店的冠軍焦糖肉桂捲，口感像烤吐司一樣香氣十足。",
+                icon: "fa-bread-slice"
+            },
+            {
+                name: "平林手 普洱茶",
+                category: "飲品",
+                price: "未知 (單價高)",
+                description: "大排長龍的茶店！特別點了加了鹹味的普洱茶（可能有奶蓋），味道非常微妙特別。",
+                icon: "fa-leaf"
+            },
+            {
+                name: "Sweetour 水果蛋糕",
+                category: "甜點",
+                price: "未知",
+                description: "壓秒衝刺買到的收尾甜點！有濃濃卡士達醬，搭配草莓、香蕉、青葡萄等水果，非常豐富。",
+                icon: "fa-cake-candles"
+            }
+        ];
+
+        // --- 2. 渲染資源卡片 ---
+        const grid = document.getElementById('resourceGrid');
+        const noResults = document.getElementById('noResults');
+
+        function renderCards(data) {
+            grid.innerHTML = ''; // 清空
+            if (data.length === 0) {
+                noResults.classList.remove('hidden');
+            } else {
+                noResults.classList.add('hidden');
+                data.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = "bg-white rounded-2xl p-6 shadow-md border border-gray-100 hover:shadow-xl transition duration-300 transform hover:-translate-y-1 flex flex-col h-full";
+                    
+                    // 根據類別設定顏色標籤
+                    let badgeColor = "bg-blue-100 text-blue-800";
+                    if(item.category === '甜點') badgeColor = "bg-pink-100 text-pink-800";
+                    if(item.category === '鹹食') badgeColor = "bg-red-100 text-red-800";
+                    if(item.category === '飲品') badgeColor = "bg-green-100 text-green-800";
+
+                    card.innerHTML = `
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 bg-orange-50 rounded-full flex items-center justify-center text-primary">
+                                <i class="fa-solid ${item.icon} text-xl"></i>
+                            </div>
+                            <span class="text-xs font-bold px-3 py-1 rounded-full ${badgeColor}">${item.category}</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">${item.name}</h3>
+                        <p class="text-sm text-primary font-semibold mb-3"><i class="fa-solid fa-tag mr-1"></i> ${item.price}</p>
+                        <p class="text-gray-600 flex-grow text-sm leading-relaxed">${item.description}</p>
+                    `;
+                    grid.appendChild(card);
+                });
+            }
+        }
+
+        // 初始化渲染
+        renderCards(resources);
+
+        // --- 3. 搜尋功能邏輯 ---
+        const searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            const filtered = resources.filter(item => 
+                item.name.toLowerCase().includes(query) || 
+                item.description.toLowerCase().includes(query) ||
+                item.category.includes(query)
+            );
+            renderCards(filtered);
+        });
+
+        // --- 4. FAQ 手風琴 (Accordion) 邏輯 ---
+        const faqToggles = document.querySelectorAll('.faq-toggle');
+        faqToggles.forEach(toggle => {
+            toggle.addEventListener('click', () => {
+                const answer = toggle.nextElementSibling;
+                const icon = toggle.querySelector('.faq-icon');
+                
+                // 關閉其他開啟的項目 (可選的，如果希望一次只能開一個)
+                /*
+                document.querySelectorAll('.faq-answer').forEach(ans => {
+                    if (ans !== answer) ans.classList.remove('open');
+                });
+                document.querySelectorAll('.faq-icon').forEach(ic => {
+                    if (ic !== icon) ic.classList.remove('open');
+                });
+                */
+
+                answer.classList.toggle('open');
+                icon.classList.toggle('open');
+            });
+        });
+
+    </script>
+</body>
+</html>
